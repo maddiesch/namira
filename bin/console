@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "namira"
+require "pry"
+
+Namira.configure do |config|
+  config.user_agent           = 'test'
+  config.headers.accept       = 'application/json'
+  config.headers.content_type = 'application/json'
+end
+
+Pry.start
