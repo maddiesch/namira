@@ -1,9 +1,5 @@
 # Namira
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/namira`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,7 +18,39 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Sending a basic `GET` request
+
+```ruby
+# Create a request
+request = Namira::Request.new(uri: 'https://httpbin.org/headers')
+
+# Send the request
+response = request.response
+
+# Parse a JSON response
+response.from_json
+```
+
+#### Configuration
+
+There are a few settings you can pass.
+
+```ruby
+Namira.configure do |config|
+  # Total number of times to follow a redirect
+  config.max_redirect = 3
+
+  # How long each portion of a request should wait before timeout
+  config.timeout      = 5.0
+
+  # A non-default User-Agent
+  config.user_agent   = 'my_app_user_agent'
+
+  # Any additional HTTP headers for a request.  If headers are passed to the request itself they will override these settings
+  config.headers.accept       = 'application/json' # Will become Accept
+  config.headers.content_type = 'application/json' # Will become Content-Type
+end
+```
 
 ## Development
 
@@ -32,10 +60,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/namira.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/skylarsch/namira.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
