@@ -15,5 +15,9 @@ module Namira
         super
       end
     end
+
+    def respond_to_missing?(method_name, include_private = false)
+      @bakcing.respond_to?(method_name) || super
+    end
   end
 end

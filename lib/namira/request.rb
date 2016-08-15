@@ -4,11 +4,12 @@ module Namira
   class Request
     attr_reader :uri, :http_method
 
-    def initialize(uri:, http_method: :get, headers: {}, body: nil)
+    def initialize(uri:, http_method: :get, headers: {}, body: nil, auth: nil)
       @uri          = uri
       @http_method  = http_method
       @headers      = headers || {}
       @body         = body
+      @auth         = auth
       @timeout      = Namira.configure.timeout
       @max_redirect = Namira.configure.max_redirect
       @backend      = Namira.configure.backend || Namira::Backend
@@ -29,7 +30,7 @@ module Namira
       {}.tap do |headers|
         headers['User-Agent'] = @user_agent
         Namira.configure.headers.each do |k, v|
-          key = k.split('_').map { |s| s.capitalize }.join('-')
+          key = k.split('_').map(&:capitalize).join('-')
           headers[key] = v
         end
         @headers.each do |k, v|
@@ -45,7 +46,8 @@ module Namira
         headers:      build_headers,
         max_redirect: @max_redirect,
         timeout:      @timeout,
-        body:         @body
+        body:         @body,
+        auth:         @auth
       )
     end
   end

@@ -7,26 +7,16 @@ module Namira
       timeout:      5.0,
       backend:      nil,
       user_agent:   "Namira/#{Namira::VERSION}"
-    }
+    }.freeze
 
     def initialize
       DEFAULT_SETTINGS.each do |k, v|
-        self.send("#{k}=", v)
+        send("#{k}=", v)
       end
     end
 
     def headers
-      @headers ||= ConfigHash.new
-    end
-  end
-
-  class ConfigHash < Hash
-    def method_missing(name, *args)
-      if name.to_s =~ /=$/
-        self[name.to_s.gsub(/=$/, '')] = args.first
-      else
-        self[name]
-      end
+      @headers ||= OpenStruct.new
     end
   end
 

@@ -8,13 +8,11 @@ module Namira
           break if value.nil?
 
           value = case value
-          when Hash
-            value[key] || value[key.to_sym]
-          when Array
-            value[key.to_i]
-          else
-            nil
-          end
+                  when Hash
+                    value[key] || value[key.to_sym]
+                  when Array
+                    value[key.to_i]
+                  end
         end
         value
       end
