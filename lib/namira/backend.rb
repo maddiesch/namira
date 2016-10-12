@@ -45,7 +45,7 @@ module Namira
         @redirect_count += 1
         location = response.headers['Location']
         raise Errors::RedirectError, 'Request redirected but no location was supplied' if location.nil?
-        send_request(location, method, headers, max_redirect, timeout, body)
+        send_request(location, method, headers, max_redirect, timeout, body, auth)
       else
         raise Errors::HTTPError.new("http_error/#{response.status}", response.status)
       end
