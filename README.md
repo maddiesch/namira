@@ -18,11 +18,28 @@ Or install it yourself as:
 
 ## Usage
 
-Sending a basic `GET` request
+### GET
 
 ```ruby
 # Create a request
 request = Namira::Request.new(uri: 'https://httpbin.org/headers')
+
+# Send the request
+response = request.response
+
+# Parse a JSON response
+response.from_json
+```
+
+### POST
+
+```ruby
+# Create a request
+request = Namira::Request.new(
+  uri: 'https://httpbin.org/headers',
+  http_method: :post,
+  request_body: JSON.dump({})
+)
 
 # Send the request
 response = request.response

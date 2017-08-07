@@ -47,7 +47,7 @@ module Namira
         raise Errors::RedirectError, 'Request redirected but no location was supplied' if location.nil?
         send_request(location, method, headers, max_redirect, timeout, body, auth)
       else
-        raise Errors::HTTPError.new("http_error/#{response.status}", response.status)
+        raise Errors::HTTPError.new("http_error/#{response.status}", response.status, Namira::Response.new(response))
       end
 
     rescue HTTP::TimeoutError => e
