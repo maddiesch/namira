@@ -38,7 +38,7 @@ response.from_json
 request = Namira::Request.new(
   uri: 'https://httpbin.org/headers',
   http_method: :post,
-  request_body: JSON.dump({})
+  body: JSON.dump({})
 )
 
 # Send the request
