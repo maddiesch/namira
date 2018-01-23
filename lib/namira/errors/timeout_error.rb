@@ -1,11 +1,11 @@
 module Namira
   module Errors
     ##
-    # A RedirectError
+    # A TimeoutError
     #
     # @!attribute [r] message
     #   @return [String] Will contain information about the error.
-    class RedirectError < BaseError
+    class TimeoutError < BaseError
     end
   end
 end

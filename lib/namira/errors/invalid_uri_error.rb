@@ -1,11 +1,11 @@
 module Namira
   module Errors
     ##
-    # A RedirectError
+    # An InvalidURIError
     #
     # @!attribute [r] message
     #   @return [String] Will contain information about the error.
-    class RedirectError < BaseError
+    class InvalidURIError < BaseError
     end
   end
 end

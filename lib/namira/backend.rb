@@ -1,29 +1,41 @@
 module Namira
+  ##
+  # The backend is responsible for sending the requests.
+  #
+  # Namira uses HTTP Gem as its default backend. You can create your own backend and override `.send_request` to
+  # use a different network stack.
+  #
+  #   Namira.config do |c|
+  #     c.backend = CustomBackend
+  #   end
+  #
+  # A fully compatable backend should handle redirects, respecting the max_redirect parameter as well as
+  # throwing a Errors::HTTPError for anything but a redirect & 2xx status code.
   class Backend
-    #
+    ##
     # This allows anyone to substitute in their own networking stack.
     #
     # Any class that implements this method and resturns a `Namira::Response` object can be a fully qualified backend.
     #
-    # The required params are
+    # @param uri [String] The URI to fetch
+    # @param method [Symbol] The HTTP method to use, expressed as a Symbol i.e. `:get`
+    # @param headers [Hash] The full HTTP headers to send from the request expressed as a Hash
+    # @param max_redirect [Integer] The maximum number of redirects to follow.  Passed from the Request
+    # @param timeout [Integer] The number of seconds before a timeout should occure
+    # @param auth [Namira::Auth::Base] The `Namira::Auth::Base` subclass instance or nil to sign the request with
     #
-    #  uri:          The URI to fetch
-    #  method:       The HTTP method to use, expressed as a Symbol i.e. `:get`
-    #  headers:      The full HTTP headers to send from the request expressed as a Hash
-    #  max_redirect: The maximum number of redirects to follow.  Passed from the Request
-    #  timeout:      The number of seconds before a timeout should occure
-    #  auth:         The Namira::Auth::Base subclass instance or nil to sign the request with
-    #
-    # This class is 100% capable of fufilling all Namira's needs.
-    # But this is an option if you really need to provide a custom networking backend
-    #
+    # @return [Namira::Response] The HTTP response
     def self.send_request(uri:, method:, headers:, max_redirect:, timeout:, body:, auth:)
       Backend.new.send_request(uri, method, headers, max_redirect, timeout, body, auth)
     end
 
+    ##
+    # @private
+    #
+    # The default backend
     def send_request(uri, method, headers, max_redirect, timeout, body, auth)
       @redirect_count ||= 0
-      raise Errors::TooManyRedirects, "Max number of redirects #{@redirect_count} for #{uri}" if @redirect_count > max_redirect
+      raise Errors::RedirectError, "Max number of redirects #{@redirect_count} for #{uri}" if @redirect_count > max_redirect
 
       log_request(method, uri)
 
@@ -49,18 +61,20 @@ module Namira
       else
         raise Errors::HTTPError.new("http_error/#{response.status}", response.status, Namira::Response.new(response))
       end
-
     rescue HTTP::TimeoutError => e
-      raise Namira::Errors::Timeout.new(e.message)
+      raise Namira::Errors::TimeoutError.new(e.message)
+    rescue Addressable::URI::InvalidURIError => e
+      raise Namira::Errors::InvalidURIError.new(e.message)
     end
 
     private
 
     def log_request(method, uri)
+      return unless Namira.configure.log_requests
       if defined?(::Rails)
         Rails.logger.debug "#{method.to_s.upcase} - #{uri}"
       else
-        puts "#{method.to_s.upcase} - #{uri}"
+        STDOUT.puts "#{method.to_s.upcase} - #{uri}"
       end
     end
   end

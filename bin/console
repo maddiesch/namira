@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "namira"
-require "pry"
+require 'bundler/setup'
+require 'namira'
+require 'pry'
 
 Namira.configure do |config|
   config.user_agent           = 'test'

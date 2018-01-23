@@ -1,13 +1,22 @@
 require 'http'
 
 module Namira
+  ##
+  # The request class is used to create and send HTTP requests.
+  #
+  #   response = Namira::Request.new(uri: 'https://httpbin.org/headers').response
   class Request
     attr_reader :uri, :http_method
 
+    ##
+    # Create a new request
+    #
+    # @param uri [String] The request URL
+    # @param http_method [Symbol] The HTTP method for the request. (Default `:get`)
     def initialize(uri:, http_method: :get, headers: {}, body: nil, auth: nil, config: {})
       @uri          = uri
       @http_method  = http_method
-      @headers      = headers || {}
+      @headers      = Hash(headers)
       @body         = body
       @auth         = auth
       @timeout      = config[:timeout] || Namira.configure.timeout
@@ -16,12 +25,23 @@ module Namira
       @user_agent   = config[:user_agent] || Namira.configure.user_agent
     end
 
+    ##
+    # Sends the request.
+    #
+    # Every time this method is called a network request will be sent.
     def send_request
-      @response ||= _send_request(uri)
+      @response = _send_request(uri)
     end
 
+    ##
+    # The {Namira::Response} for the request.
+    #
+    # If the request hasn't been sent yet calling this will get the request.
+    #
+    # @return {Namira::Response}
     def response
-      send_request
+      send_request if @response.nil?
+      @response
     end
 
     private
@@ -29,8 +49,8 @@ module Namira
     def build_headers
       {}.tap do |headers|
         headers['User-Agent'] = @user_agent
-        Namira.configure.headers.each do |k, v|
-          key = k.split('_').map(&:capitalize).join('-')
+        Namira.configure.headers.to_h.each do |k, v|
+          key = k.to_s.split('_').map(&:capitalize).join('-')
           headers[key] = v
         end
         @headers.each do |k, v|
