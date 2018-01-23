@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.3
   Exclude:
     - Rakefile
     - spec/**/*
@@ -47,4 +47,7 @@ Style/GuardClause:
   Enabled: false
 
 Style/RaiseArgs:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
   Enabled: false
