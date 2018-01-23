@@ -26,48 +26,51 @@ module Namira
     #
     # @return [Namira::Response] The HTTP response
     def self.send_request(uri:, method:, headers:, max_redirect:, timeout:, body:, auth:)
-      Backend.new.send_request(uri, method, headers, max_redirect, timeout, body, auth)
+      Backend.new(
+        uri: uri,
+        method: method,
+        headers: headers,
+        max_redirect: max_redirect,
+        timeout: timeout,
+        body: body,
+        auth: auth
+      ).execute
     end
 
     ##
     # @private
-    #
-    # The default backend
-    def send_request(uri, method, headers, max_redirect, timeout, body, auth)
-      @redirect_count ||= 0
-      raise Errors::RedirectError, "Max number of redirects #{@redirect_count} for #{uri}" if @redirect_count > max_redirect
-
-      log_request(method, uri)
-
-      http = HTTP.timeout(
-        :per_operation,
-        write:   timeout,
-        connect: timeout,
-        read:    timeout
-      ).headers(headers)
-
-      http = auth.sign_request(http, @redirect_count) unless auth.nil?
-
-      response = http.send(method, uri, body: body)
-
-      case response.status
-      when 200..299
-        Namira::Response.new(response)
-      when 301, 302
-        @redirect_count += 1
-        location = response.headers['Location']
-        raise Errors::RedirectError, 'Request redirected but no location was supplied' if location.nil?
-        send_request(location, method, headers, max_redirect, timeout, body, auth)
-      else
-        raise Errors::HTTPError.new("http_error/#{response.status}", response.status, Namira::Response.new(response))
+    def initialize(opts = {})
+      opts.each do |key, value|
+        instance_variable_set("@#{key}", value)
       end
-    rescue HTTP::TimeoutError => e
-      raise Namira::Errors::TimeoutError.new(e.message)
-    rescue Addressable::URI::InvalidURIError => e
-      raise Namira::Errors::InvalidURIError.new(e.message)
+      @redirect_count = 0
+    end
+
+    ##
+    # @private
+    def execute(location = nil)
+      ensure_redirect_count!
+      prepare_request
+      sign_request_if_needed
+      send_request(location || @uri)
+      handle_response
     end
 
     private
+
+    def ensure_redirect_count!
+      return if @redirect_count <= @max_redirect
+      raise Errors::RedirectError, "Max number of redirects #{@redirect_count} for #{@uri}"
+    end
+
+    def prepare_request
+      @http = HTTP.timeout(
+        :per_operation,
+        write:   @timeout,
+        connect: @timeout,
+        read:    @timeout
+      ).headers(@headers)
+    end
 
     def log_request(method, uri)
       return unless Namira.configure.log_requests
@@ -75,6 +78,33 @@ module Namira
         Rails.logger.debug "#{method.to_s.upcase} - #{uri}"
       else
         STDOUT.puts "#{method.to_s.upcase} - #{uri}"
+      end
+    end
+
+    def send_request(location)
+      log_request(@method, location)
+      @response = @http.send(@method, location, body: @body)
+    rescue HTTP::TimeoutError => e
+      raise Namira::Errors::TimeoutError.new(e.message)
+    rescue Addressable::URI::InvalidURIError => e
+      raise Namira::Errors::InvalidURIError.new(e.message)
+    end
+
+    def sign_request_if_needed
+      @http = @auth.sign_request(@http, @redirect_count) unless @auth.nil?
+    end
+
+    def handle_response
+      case @response.status
+      when 200..299
+        Namira::Response.new(@response)
+      when 301, 302
+        @redirect_count += 1
+        location = @response.headers['Location']
+        raise Errors::RedirectError, 'Request redirected but no location was supplied' if location.nil?
+        execute(location)
+      else
+        raise Errors::HTTPError.new("http_error/#{@response.status}", @response.status, Namira::Response.new(@response))
       end
     end
   end
