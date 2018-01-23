@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    environment:
+      CC_TEST_REPORTER_ID: 1c8715d8f4fb6cb280a974b7a537ea5e10dd93e92e1267db5e9dadb3b32cf178
+    docker:
+      - image: circleci/ruby:2.4.2
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+      - run:
+          name: Report Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov $CIRCLE_ARTIFACTS/coverage/.resultset.json
+            ./cc-test-reporter upload-coverage
+      - store_artifacts:
+          path: coverage/coverage.json

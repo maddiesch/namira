@@ -1,3 +1,5 @@
 module Namira
-  VERSION = '0.2.1'.freeze
+  ##
+  # The current version of Namira
+  VERSION = '1.0.0.rc1'.freeze
 end

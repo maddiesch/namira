@@ -1,5 +1,12 @@
 # Namira
 
+[![Gem Version](https://badge.fury.io/rb/namira.svg)](https://badge.fury.io/rb/namira)
+[![CircleCI](https://circleci.com/gh/skylarsch/namira/tree/master.svg?style=svg)](https://circleci.com/gh/skylarsch/namira/tree/master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/888de458aae02d3c7cfc/maintainability)](https://codeclimate.com/github/skylarsch/namira/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/888de458aae02d3c7cfc/test_coverage)](https://codeclimate.com/github/skylarsch/namira/test_coverage)
+
+A Ruby HTTP client.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -15,6 +22,10 @@ And then execute:
 Or install it yourself as:
 
     $ gem install namira
+
+## Documentation
+
+Run `bundle exec yard`
 
 ## Usage
 

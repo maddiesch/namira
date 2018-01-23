@@ -2,7 +2,6 @@ AllCops:
   TargetRubyVersion: 2.2
   Exclude:
     - Rakefile
-    - bin/**/*
 
 Metrics/AbcSize:
   Max: 30
@@ -25,23 +24,17 @@ DotPosition:
 StringLiterals:
   EnforcedStyle: single_quotes
 
-Style/AlignParameters:
+Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
 
-Style/MultilineOperationIndentation:
+Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
-Style/MultilineMethodCallIndentation:
+Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
-
-Style/ExtraSpacing:
-  Enabled: false
 
 Style/AndOr:
   EnforcedStyle: conditionals
-
-Style/Documentation:
-  Enabled: false
 
 Style/ClassAndModuleChildren:
   Enabled: false
