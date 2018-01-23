@@ -1,5 +1,9 @@
 module Namira
+  ##
+  # Authentication
   module Auth
+    ##
+    # The base authentication class
     class Base
       attr_accessor :sign_redirects
 
@@ -11,11 +15,19 @@ module Namira
         end
       end
 
+      ##
+      # @private
+      #
+      # Signs a request.
       def sign_request(backend, redirect_count)
         return if redirect_count > 0 && !sign_redirects?
         sign(backend)
       end
 
+      ##
+      # Perform the signing of the request
+      #
+      # @param backend [HTTP] The instance of the backend request to sign.
       def sign(_backend)
         raise NotImplementedError, 'Auth should override the `sign` method'
       end

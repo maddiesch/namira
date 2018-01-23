@@ -13,6 +13,10 @@ module Namira
     #
     # @param uri [String] The request URL
     # @param http_method [Symbol] The HTTP method for the request. (Default `:get`)
+    # @param headers [Hash] Additional headers to send with the request. (Default: `{}`)
+    # @param body [String, #to_s] The body to send. (Default: nil)
+    # @param auth [Namira::Auth::Base] The auth instance used to sign requests.
+    # @param config [Hash] {Namira::Config} overrides
     def initialize(uri:, http_method: :get, headers: {}, body: nil, auth: nil, config: {})
       @uri          = uri
       @http_method  = http_method

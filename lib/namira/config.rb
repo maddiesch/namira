@@ -1,5 +1,6 @@
 require 'ostruct'
 
+##
 module Namira
   ##
   # Namira configuration

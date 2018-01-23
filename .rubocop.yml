@@ -2,6 +2,7 @@ AllCops:
   TargetRubyVersion: 2.2
   Exclude:
     - Rakefile
+    - spec/**/*
 
 Metrics/AbcSize:
   Max: 30
