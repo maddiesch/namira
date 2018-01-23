@@ -4,16 +4,16 @@ module Namira
   class Request
     attr_reader :uri, :http_method
 
-    def initialize(uri:, http_method: :get, headers: {}, body: nil, auth: nil)
+    def initialize(uri:, http_method: :get, headers: {}, body: nil, auth: nil, config: {})
       @uri          = uri
       @http_method  = http_method
       @headers      = headers || {}
       @body         = body
       @auth         = auth
-      @timeout      = Namira.configure.timeout
-      @max_redirect = Namira.configure.max_redirect
-      @backend      = Namira.configure.backend || Namira::Backend
-      @user_agent   = Namira.configure.user_agent
+      @timeout      = config[:timeout] || Namira.configure.timeout
+      @max_redirect = config[:max_redirect] || Namira.configure.max_redirect
+      @backend      = config[:backend] || Namira.configure.backend || Namira::Backend
+      @user_agent   = config[:user_agent] || Namira.configure.user_agent
     end
 
     def send_request
