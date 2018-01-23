@@ -142,7 +142,7 @@ jobs:
           command: bundle exec rspec spec/**/*.rb
 workflows:
   version: 2
-  specs:
+  jobs:
     - build_2_0
     - build_2_1
     - build_2_2
