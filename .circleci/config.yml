@@ -1,10 +1,10 @@
 version: 2
 jobs:
-  build:
+  latest:
     environment:
       CC_TEST_REPORTER_ID: 1c8715d8f4fb6cb280a974b7a537ea5e10dd93e92e1267db5e9dadb3b32cf178
     docker:
-      - image: circleci/ruby:2.4.2
+      - image: circleci/ruby:latest
     working_directory: ~/repo
     steps:
       - checkout
@@ -35,3 +35,117 @@ jobs:
             ./cc-test-reporter upload-coverage
       - store_artifacts:
           path: coverage/coverage.json
+  build_2_4:
+    docker:
+      - image: circleci/ruby:2.4.2
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+  build_2_3:
+    docker:
+      - image: circleci/ruby:2.3.4
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+  build_2_2:
+    docker:
+      - image: circleci/ruby:2.2.7
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+  build_2_1:
+    docker:
+      - image: circleci/ruby:2.1.10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+  build_2_0:
+    docker:
+      - image: circleci/ruby:2
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
+workflows:
+  version: 2
+  specs:
+    - build_2_0
+    - build_2_1
+    - build_2_2
+    - build_2_3
+    - build_2_4
+    - latest
