@@ -27,6 +27,7 @@ module Namira
       @max_redirect = config[:max_redirect] || Namira.configure.max_redirect
       @backend      = config[:backend] || Namira.configure.backend || Namira::Backend
       @user_agent   = config[:user_agent] || Namira.configure.user_agent
+      @max_redirect = Backend::NO_FOLLOW_REDIRECT_COUNT if config[:follow_redirect] == false
     end
 
     ##

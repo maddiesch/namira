@@ -105,6 +105,24 @@ describe Namira::Request do
           expect { subject }.to raise_error Namira::Errors::RedirectError
         end
       end
+
+      context 'given no follow' do
+        let(:request) do
+          described_class.new(
+            uri: 'http://example.test/',
+            http_method: :get,
+            config: {
+              follow_redirect: false
+            }
+          )
+        end
+
+        it 'raises a Namira::Errors::RedirectError' do
+          expect { subject }.to raise_error Namira::Errors::HTTPError do |e|
+            expect(e.status).to eq 301
+          end
+        end
+      end
     end
 
     context 'given global headers' do

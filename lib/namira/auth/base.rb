@@ -19,6 +19,9 @@ module Namira
       # @private
       #
       # Signs a request.
+      #
+      # @param backend [HTTP] The request being signed
+      # @param redirect_count [Integer] The number of redirects this request has encountered
       def sign_request(backend, redirect_count)
         return if redirect_count > 0 && !sign_redirects?
         sign(backend)

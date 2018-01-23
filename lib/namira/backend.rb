@@ -38,6 +38,10 @@ module Namira
     end
 
     ##
+    # The default max redirects to consider the request a "no follow"
+    NO_FOLLOW_REDIRECT_COUNT = -1
+
+    ##
     # @private
     def initialize(opts = {})
       opts.each do |key, value|
@@ -48,8 +52,10 @@ module Namira
 
     ##
     # @private
+    #
+    # Perform the request
     def execute(location = nil)
-      ensure_redirect_count!
+      ensure_redirect_count!(location)
       prepare_request
       sign_request_if_needed
       send_request(location || @uri)
@@ -58,9 +64,14 @@ module Namira
 
     private
 
-    def ensure_redirect_count!
+    def ensure_redirect_count!(location)
+      return if @redirect_count.zero?
       return if @redirect_count <= @max_redirect
-      raise Errors::RedirectError, "Max number of redirects #{@redirect_count} for #{@uri}"
+      raise Errors::RedirectError.new(
+        "Max number of redirects #{@redirect_count} for #{@uri}",
+        location,
+        @redirect_count
+      )
     end
 
     def prepare_request
@@ -97,14 +108,30 @@ module Namira
     def handle_response
       case @response.status
       when 200..299
-        Namira::Response.new(@response)
+        create_response
       when 301, 302
+        handle_redirect
+      else
+        create_error_response
+      end
+    end
+
+    def create_response
+      Namira::Response.new(@response)
+    end
+
+    def create_error_response
+      raise Errors::HTTPError.new("http_error/#{@response.status}", @response.status, create_response)
+    end
+
+    def handle_redirect
+      if @max_redirect == NO_FOLLOW_REDIRECT_COUNT
+        create_error_response
+      else
         @redirect_count += 1
         location = @response.headers['Location']
-        raise Errors::RedirectError, 'Request redirected but no location was supplied' if location.nil?
+        raise Errors::RedirectError.new('Request redirected but no location was supplied', nil, @redirect_count) if location.nil?
         execute(location)
-      else
-        raise Errors::HTTPError.new("http_error/#{@response.status}", @response.status, Namira::Response.new(@response))
       end
     end
   end
