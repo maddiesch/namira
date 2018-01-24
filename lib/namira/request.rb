@@ -15,19 +15,14 @@ module Namira
     # @param http_method [Symbol] The HTTP method for the request. (Default `:get`)
     # @param headers [Hash] Additional headers to send with the request. (Default: `{}`)
     # @param body [String, #to_s] The body to send. (Default: nil)
-    # @param auth [Namira::Auth::Base] The auth instance used to sign requests.
     # @param config [Hash] {Namira::Config} overrides
-    def initialize(uri:, http_method: :get, headers: {}, body: nil, auth: nil, config: {})
-      @uri          = uri
-      @http_method  = http_method
-      @headers      = Hash(headers)
-      @body         = body
-      @auth         = auth
-      @timeout      = config[:timeout] || Namira.configure.timeout
-      @max_redirect = config[:max_redirect] || Namira.configure.max_redirect
-      @backend      = config[:backend] || Namira.configure.backend || Namira::Backend
-      @user_agent   = config[:user_agent] || Namira.configure.user_agent
-      @max_redirect = Backend::NO_FOLLOW_REDIRECT_COUNT if config[:follow_redirect] == false
+    def initialize(uri:, http_method: :get, headers: {}, body: nil, config: {})
+      @uri         = uri
+      @http_method = http_method
+      @headers     = Hash(headers)
+      @body        = body
+      @config      = Namira.configure.to_h.merge(Hash(config))
+      @stack       = Namira::Stack.default
     end
 
     ##
@@ -35,7 +30,7 @@ module Namira
     #
     # Every time this method is called a network request will be sent.
     def send_request
-      @response = _send_request(uri)
+      @response = _send_request
     end
 
     ##
@@ -51,29 +46,20 @@ module Namira
 
     private
 
-    def build_headers
-      {}.tap do |headers|
-        headers['User-Agent'] = @user_agent
-        Namira.configure.headers.to_h.each do |k, v|
-          key = k.to_s.split('_').map(&:capitalize).join('-')
-          headers[key] = v
-        end
-        @headers.each do |k, v|
-          headers[k] = v
-        end
-      end
+    def env
+      Namira::Env.new(
+        uri: @uri,
+        method: @http_method,
+        body: @body,
+        headers: @headers,
+        config: @config
+      )
     end
 
-    def _send_request(uri)
-      @backend.send_request(
-        uri:          uri,
-        method:       http_method,
-        headers:      build_headers,
-        max_redirect: @max_redirect,
-        timeout:      @timeout,
-        body:         @body,
-        auth:         @auth
-      )
+    def _send_request
+      @stack.call(env).response
+    rescue Addressable::URI::InvalidURIError => e
+      raise Namira::Errors::InvalidURIError.new(e.message)
     end
   end
 end

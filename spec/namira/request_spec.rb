@@ -117,9 +117,28 @@ describe Namira::Request do
           )
         end
 
-        it 'raises a Namira::Errors::RedirectError' do
+        it 'raises a Namira::Errors::HTTPError' do
           expect { subject }.to raise_error Namira::Errors::HTTPError do |e|
             expect(e.status).to eq 301
+          end
+        end
+      end
+
+      context 'given a malformed location' do
+        before do
+          stub_request(:get, /example\.test/).to_return(status: 301, headers: {})
+        end
+
+        let(:request) do
+          described_class.new(
+            uri: 'http://example.test/',
+            http_method: :get
+          )
+        end
+
+        it 'raises a Namira::Errors::RedirectError' do
+          expect { subject }.to raise_error Namira::Errors::RedirectError do |e|
+            expect(e.message).to eq 'Request redirected but no location was supplied'
           end
         end
       end
@@ -183,11 +202,29 @@ describe Namira::Request do
           Object.const_set 'Rails', klass
         end
 
+        after { Object.send :remove_const, :Rails }
+
         it 'loggs to debug' do
           rails = double
           logger = double
           expect(Rails).to receive(:logger).and_return(logger)
           expect(logger).to receive(:debug).with('GET - http://example.test/')
+          request.send_request
+        end
+      end
+
+      context 'per-request disabling' do
+        let(:request) do
+          described_class.new(
+            uri: 'http://example.test/',
+            config: {
+              Namira::Middleware::Logger::SKIP_LOGGING_KEY => true
+            }
+          )
+        end
+
+        it 'loggs to puts' do
+          expect(STDOUT).to_not receive(:puts)
           request.send_request
         end
       end

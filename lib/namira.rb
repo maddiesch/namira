@@ -1,11 +1,12 @@
-require 'namira/version'
+require 'namira/config'
+require 'namira/env'
+require 'namira/errors'
+require 'namira/middleware'
+require 'namira/query_builder'
 require 'namira/request'
 require 'namira/response'
-require 'namira/errors'
-require 'namira/config'
-require 'namira/query_builder'
-require 'namira/backend'
-require 'namira/auth'
+require 'namira/stack'
+require 'namira/version'
 
 ##
 # A Ruby HTTP client
