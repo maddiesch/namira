@@ -38,6 +38,27 @@ jobs:
             ./cc-test-reporter upload-coverage
       - store_artifacts:
           path: coverage/coverage.json
+  build_2_5:
+    docker:
+      - image: circleci/ruby:2.5
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-gems-{{ checksum "namira.gemspec" }}
+            - v1-gems-
+      - run:
+          name: install gems
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: v1-gems-{{ checksum "namira.gemspec" }}
+          paths:
+            - ./vendor/bundle
+      - run:
+          name: Run Specs
+          command: bundle exec rspec spec/**/*.rb
   build_2_4:
     docker:
       - image: circleci/ruby:2.4.2
