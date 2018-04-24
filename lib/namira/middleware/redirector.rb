@@ -17,20 +17,20 @@ module Namira
       # @param env [Namira::Env] The request environment
       def call(env)
         @app.call(env)
-      rescue Errors::HTTPError => e
-        if redirect?(e, env)
-          handle_redirect(env, e)
+      rescue Errors::HTTPError => error
+        if redirect?(error, env)
+          handle_redirect(env, error)
         else
-          raise e
+          raise error
         end
       end
 
       private
 
-      def handle_redirect(env, e)
+      def handle_redirect(env, error)
         count = env.redirect_count
         redirect_count_error(env) if count >= max_redirect(env)
-        location = e.response.headers['Location']
+        location = error.response.headers['Location']
         redirect_location_error(env) if location.nil?
         env.uri = Addressable::URI.parse(location)
         env.redirect_count += 1
@@ -57,9 +57,9 @@ module Namira
         )
       end
 
-      def redirect?(e, env)
+      def redirect?(error, env)
         return false unless env.config[:follow_redirect].nil? ? true : env.config[:follow_redirect]
-        REDIRECT_STATUS.include?(e.status)
+        REDIRECT_STATUS.include?(error.status)
       end
     end
   end

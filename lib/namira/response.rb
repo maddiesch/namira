@@ -11,7 +11,7 @@ module Namira
     ##
     # @return [Hash, Array] Parse the response body as JSON
     def from_json
-      @json ||= JSON.parse(@backing.body)
+      @from_json ||= JSON.parse(@backing.body)
     end
 
     ##

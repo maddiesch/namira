@@ -122,55 +122,12 @@ jobs:
       - run:
           name: Run Specs
           command: bundle exec rspec spec/**/*.rb
-  build_2_1:
-    docker:
-      - image: circleci/ruby:2.1.10
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-gems-{{ checksum "namira.gemspec" }}
-            - v1-gems-
-      - run:
-          name: install gems
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-      - save_cache:
-          key: v1-gems-{{ checksum "namira.gemspec" }}
-          paths:
-            - ./vendor/bundle
-      - run:
-          name: Run Specs
-          command: bundle exec rspec spec/**/*.rb
-  build_2_0:
-    docker:
-      - image: circleci/ruby:2
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-gems-{{ checksum "namira.gemspec" }}
-            - v1-gems-
-      - run:
-          name: install gems
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-      - save_cache:
-          key: v1-gems-{{ checksum "namira.gemspec" }}
-          paths:
-            - ./vendor/bundle
-      - run:
-          name: Run Specs
-          command: bundle exec rspec spec/**/*.rb
 workflows:
   version: 2
   specs:
     jobs:
-      - build_2_0
-      - build_2_1
       - build_2_2
       - build_2_3
       - build_2_4
+      - build_2_5
       - latest
