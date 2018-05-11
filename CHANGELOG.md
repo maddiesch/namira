@@ -1,3 +1,7 @@
+# 1.1 (2018-05-18)
+
+* Make HTTP Errors their own class.
+
 # 1.0.0.rc3 (2018-01-28)
 
 * Converted to using a middleware stack for sending requests.

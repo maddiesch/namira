@@ -24,7 +24,7 @@ module Namira
         if (200...300).cover?(response.status)
           final
         else
-          raise Errors::HTTPError.new("http_error/#{response.status}", response.status, final)
+          raise Errors::HTTPError.create(final)
         end
       end
     end
