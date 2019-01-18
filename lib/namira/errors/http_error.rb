@@ -32,18 +32,29 @@ module Namira
           klass_for_status(response.status).new("http_error/#{response.status}", response.status, response)
         end
 
+        def generate_custom_classes
+          STATUS_MAPPING.each do |_, value|
+            klass_name = "#{value.tr(' ', '')}Error"
+            begin
+              HTTPError.const_get(klass_name)
+            rescue NameError
+              klass = Class.new(HTTPError) {}
+              HTTPError.const_set(klass_name, klass)
+            end
+          end
+        end
+
         private
 
         def klass_for_status(status)
           name = STATUS_MAPPING[status.to_i.to_s]
           return HTTPError if name.nil?
+
           klass_name = "#{name.tr(' ', '')}Error"
           begin
             HTTPError.const_get(klass_name)
           rescue NameError
-            klass = Class.new(HTTPError) {}
-            HTTPError.const_set(klass_name, klass)
-            retry
+            return HTTPError
           end
         end
       end
@@ -101,3 +112,5 @@ module Namira
     end
   end
 end
+
+Namira::Errors::HTTPError.generate_custom_classes

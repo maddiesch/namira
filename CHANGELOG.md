@@ -1,3 +1,7 @@
+# 1.2 (2019-01-18)
+
+* Auto add Bugsnag error information
+
 # 1.1 (2018-05-18)
 
 * Make HTTP Errors their own class.

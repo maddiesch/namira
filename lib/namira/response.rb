@@ -2,9 +2,18 @@ module Namira
   ##
   # HTTP response
   class Response
+    attr_reader :method
+
+    attr_reader :url
+
+    attr_reader :redirect_count
+
     ##
     # Create a new {Namira::Response}
-    def initialize(backing)
+    def initialize(method, url, redirect_count, backing)
+      @method = method
+      @url = url
+      @redirect_count = redirect_count
       @backing = backing
     end
 
