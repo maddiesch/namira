@@ -126,7 +126,6 @@ workflows:
   version: 2
   specs:
     jobs:
-      - build_2_2
       - build_2_3
       - build_2_4
       - build_2_5
