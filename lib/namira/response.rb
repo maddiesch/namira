@@ -1,3 +1,5 @@
+require_relative 'async/serializer'
+
 module Namira
   ##
   # HTTP response
@@ -7,6 +9,10 @@ module Namira
     attr_reader :url
 
     attr_reader :redirect_count
+
+    def self.serialized(raw_response)
+      Namira::Async::Serializer.unserialize_response(raw_response)
+    end
 
     ##
     # Create a new {Namira::Response}

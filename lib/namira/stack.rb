@@ -30,6 +30,7 @@ module Namira
     # @param env [Namira::Env] The request environment
     def call(env)
       raise ArgumentError, 'Invalid environment' unless env.is_a?(Namira::Env)
+
       to_app.call(env)
     end
 

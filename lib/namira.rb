@@ -1,3 +1,4 @@
+require 'namira/async'
 require 'namira/config'
 require 'namira/env'
 require 'namira/error_helpers'

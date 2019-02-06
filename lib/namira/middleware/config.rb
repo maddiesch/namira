@@ -19,7 +19,7 @@ module Namira
       private
 
       def merge_config(config)
-        Namira.configure.to_h.merge(config)
+        Namira.config.to_h.merge(config)
       end
     end
   end

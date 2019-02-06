@@ -1,3 +1,7 @@
+# 1.3 (2019-02-06)
+
+* Support for async requests. Supports ActiveJob and plain Sidekiq.
+
 # 1.2 (2019-01-18)
 
 * Auto add Bugsnag error information

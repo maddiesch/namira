@@ -1,8 +1,7 @@
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.3
   Exclude:
     - Rakefile
-    - spec/**/*
 
 Metrics/AbcSize:
   Max: 30
@@ -18,6 +17,11 @@ Metrics/ParameterLists:
 
 Metrics/CyclomaticComplexity:
   Max: 10
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - spec/**/*
 
 DotPosition:
   EnforcedStyle: leading

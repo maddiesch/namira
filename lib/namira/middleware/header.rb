@@ -12,7 +12,7 @@ module Namira
       #
       # @param env [Namira::Env] The request environment
       def call(env)
-        headers = Hash(Namira.configure.headers.to_h).dup
+        headers = Hash(Namira.config.headers.to_h).dup
         headers.merge!(additional_headers(env))
         headers.merge!(env.headers.to_h)
         env.headers = convert_headers(headers)

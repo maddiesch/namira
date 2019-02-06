@@ -15,9 +15,9 @@ module Namira
         timeout = env.config[:timeout] || 30.0
         http = HTTP.timeout(
           :per_operation,
-          write:   timeout,
+          write: timeout,
           connect: timeout,
-          read:    timeout
+          read: timeout
         )
         http = http.headers(env.headers)
         env.response = http.send(env.method, env.uri, body: env.body)

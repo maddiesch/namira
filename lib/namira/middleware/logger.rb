@@ -23,15 +23,16 @@ module Namira
       private
 
       def logging?(env)
-        if env.config.keys.include?(SKIP_LOGGING_KEY)
+        if env.config.key?(SKIP_LOGGING_KEY)
           env.config[SKIP_LOGGING_KEY] == false
         else
-          Namira.configure.log_requests == true
+          Namira.config.log_requests == true
         end
       end
 
       def log_request(env)
         return unless logging?(env)
+
         message = "#{env.method.to_s.upcase} - #{env.uri}"
         if defined?(::Rails)
           Rails.logger.debug(message)

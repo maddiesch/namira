@@ -59,6 +59,7 @@ module Namira
 
       def redirect?(error, env)
         return false unless env.config[:follow_redirect].nil? ? true : env.config[:follow_redirect]
+
         REDIRECT_STATUS.include?(error.status)
       end
     end

@@ -21,12 +21,20 @@ describe Namira::Config do
     end
 
     describe '#headers' do
-      it { expect(subject.headers).to be_a(OpenStruct) }
+      it { expect(subject.headers).to be_a(Hash) }
       it { expect(subject.headers.to_h).to be_empty }
     end
 
     describe '#log_requests' do
       it { expect(subject.log_requests).to eq true }
+    end
+
+    describe '#async_adapter' do
+      it { expect(subject.async_adapter).to eq :active_job }
+    end
+
+    describe '#async_queue_name' do
+      it { expect(subject.async_queue_name).to eq :default }
     end
   end
 end

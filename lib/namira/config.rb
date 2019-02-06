@@ -30,11 +30,20 @@ module Namira
   #
   # @!attribute [r] headers
   #   Default headers to send with each request
-  #   @return [OpenStruct]
+  #   @return [Hash]
   #
   # @!attribute [rw] log_requests
   #   Log requests using puts or Rails.logger.debug if it's defined
   #   @return (Bool) Defaults: true
+  #
+  # @!attribute [rw] async_queue_name
+  #   The queue name that async requests should be added too.
+  #   @return [Symbol] Defaults: :default
+  #
+  # @!attribute [rw] async_adapter
+  #   The preferred async adapter to use.
+  #   Possible Values: :active_job, :sidekiq
+  #   @return [Symbol] Defaults: :active_job
   class Config < OpenStruct
     ##
     # The
@@ -45,11 +54,13 @@ module Namira
 
     DEFAULT_SETTINGS = {
       max_redirect: 3,
-      timeout:      5.0,
-      backend:      nil,
-      user_agent:   "Namira/#{Namira::VERSION}",
-      headers:      OpenStruct.new,
-      log_requests: true
+      timeout: 5.0,
+      backend: nil,
+      user_agent: "Namira/#{Namira::VERSION}",
+      headers: {},
+      log_requests: true,
+      async_queue_name: :default,
+      async_adapter: :active_job
     }.freeze
 
     private_constant :DEFAULT_SETTINGS
@@ -62,8 +73,12 @@ module Namira
   ##
   # The shared configuration
   def self.configure
+    yield(config) if block_given?
+    config
+  end
+
+  def self.config
     @config ||= Config.new
-    yield(@config) if block_given?
     @config
   end
 end

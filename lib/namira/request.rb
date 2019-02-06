@@ -1,4 +1,5 @@
 require 'http'
+require_relative 'async'
 
 module Namira
   ##
@@ -6,7 +7,7 @@ module Namira
   #
   #   response = Namira::Request.new(uri: 'https://httpbin.org/headers').response
   class Request
-    attr_reader :uri, :http_method
+    attr_reader :uri, :http_method, :headers, :body, :config
 
     ##
     # Create a new request
@@ -21,7 +22,7 @@ module Namira
       @http_method = http_method
       @headers     = Hash(headers)
       @body        = body
-      @config      = Namira.configure.to_h.merge(Hash(config))
+      @config      = Namira.config.to_h.merge(Hash(config))
       @stack       = Namira::Stack.default
     end
 
@@ -31,6 +32,10 @@ module Namira
     # Every time this method is called a network request will be sent.
     def send_request
       @response = _send_request
+    end
+
+    def send_async(queue_name: nil, adapter: nil)
+      Namira::Async::Performer.schedule(self, adapter, queue_name)
     end
 
     ##

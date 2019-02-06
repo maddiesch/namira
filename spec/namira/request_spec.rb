@@ -38,7 +38,7 @@ describe Namira::Request do
 
         it "raises a http_error/#{status}" do
           expect { request.response }.to raise_error(Namira::Errors::HTTPError) do |e|
-            expect(e.message).to match /^http_error\/#{status}/
+            expect(e.message).to match %r{^http_error/#{status}}
           end
         end
       end
@@ -70,10 +70,10 @@ describe Namira::Request do
 
       before do
         stub_request(:get, /example\.test/).to_return(status: 301, headers: { 'Location' => 'http://example.test/1' })
-        stub_request(:get, /example\.test\/1/).to_return(status: 301, headers: { 'Location' => 'http://example.test/2' })
-        stub_request(:get, /example\.test\/2/).to_return(status: 301, headers: { 'Location' => 'http://example.test/3' })
-        stub_request(:get, /example\.test\/3/).to_return(status: 301, headers: { 'Location' => 'http://example.test/4' })
-        stub_request(:get, /example\.test\/4/).to_return(status: 200)
+        stub_request(:get, %r{example\.test/1}).to_return(status: 301, headers: { 'Location' => 'http://example.test/2' })
+        stub_request(:get, %r{example\.test/2}).to_return(status: 301, headers: { 'Location' => 'http://example.test/3' })
+        stub_request(:get, %r{example\.test/3}).to_return(status: 301, headers: { 'Location' => 'http://example.test/4' })
+        stub_request(:get, %r{example\.test/4}).to_return(status: 200)
       end
 
       context 'given enough redirects' do
@@ -151,9 +151,9 @@ describe Namira::Request do
 
       before do
         Namira.configure do |c|
-          c.headers.test_header = 'Foo'
+          c.headers['X-Test-Header'] = 'Foo'
         end
-        stub_request(:get, /example\.test/).with(headers: { 'Test-Header' => 'Foo', 'Foo' => 'Bar' })
+        stub_request(:get, /example\.test/).with(headers: { 'X-Test-Header' => 'Foo', 'Foo' => 'Bar' })
       end
 
       after do

@@ -17,13 +17,12 @@ if defined?(::Bugsnag)
           notification.exceptions.each do |exception|
             next unless exception.is_a?(Namira::Errors::HTTPError)
 
-            notification.add_tab("Namira #{exception.response.status.to_i}", {
+            notification.add_tab("Namira #{exception.response.status.to_i}",
               headers: exception.response.headers.to_h,
               body: exception.response.body.to_s[0...200],
               method: exception.response.method.to_s,
               url: exception.response.url.to_s,
-              redirected: (exception.response.redirect_count > 0).to_s
-            })
+              redirected: (exception.response.redirect_count > 0).to_s)
           end
 
           @bugsnag.call(notification)
