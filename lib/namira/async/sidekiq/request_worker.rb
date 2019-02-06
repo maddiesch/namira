@@ -2,9 +2,9 @@ require_relative '../performer'
 
 module Namira
   module Async
-    module ActiveJob
+    module Sidekiq
       class RequestWorker
-        include Sidekiq::Worker
+        include ::Sidekiq::Worker
 
         def perform(payload)
           Namira::Async::Performer.perform(payload)
