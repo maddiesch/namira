@@ -31,7 +31,7 @@ if defined?(::Bugsnag)
     end
   end
 
-  ::Bugsnag.configure do |config|
+  ::Bugsnag.configure(false) do |config|
     config.middleware.use Namira::ErrorHelpers::Bugsnag
   end
 end
