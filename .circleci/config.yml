@@ -8,6 +8,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: gem install bundler
       - run:
           name: ruby version
           command: ruby --version
@@ -44,6 +45,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: gem install bundler
       - restore_cache:
           keys:
             - v1-gems-{{ checksum "namira.gemspec" }}
@@ -65,6 +67,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: gem install bundler
       - restore_cache:
           keys:
             - v1-gems-{{ checksum "namira.gemspec" }}
@@ -86,6 +89,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: gem install bundler
       - restore_cache:
           keys:
             - v1-gems-{{ checksum "namira.gemspec" }}
@@ -107,6 +111,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - run: gem install bundler
       - restore_cache:
           keys:
             - v1-gems-{{ checksum "namira.gemspec" }}
