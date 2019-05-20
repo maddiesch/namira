@@ -1,3 +1,9 @@
+# 1.4 (2019-06-20)
+
+* Update Bundler
+
+* Quiet Bugsnag
+
 # 1.3 (2019-02-06)
 
 * Support for async requests. Supports ActiveJob and plain Sidekiq.

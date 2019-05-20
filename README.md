@@ -1,9 +1,9 @@
 # Namira
 
 [![Gem Version](https://badge.fury.io/rb/namira.svg)](https://badge.fury.io/rb/namira)
-[![CircleCI](https://circleci.com/gh/skylarsch/namira/tree/master.svg?style=svg)](https://circleci.com/gh/skylarsch/namira/tree/master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/888de458aae02d3c7cfc/maintainability)](https://codeclimate.com/github/skylarsch/namira/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/888de458aae02d3c7cfc/test_coverage)](https://codeclimate.com/github/skylarsch/namira/test_coverage)
+[![CircleCI](https://circleci.com/gh/maddiesch/namira/tree/master.svg?style=svg)](https://circleci.com/gh/maddiesch/namira/tree/master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/888de458aae02d3c7cfc/maintainability)](https://codeclimate.com/github/maddiesch/namira/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/888de458aae02d3c7cfc/test_coverage)](https://codeclimate.com/github/maddiesch/namira/test_coverage)
 
 A Ruby HTTP client.
 
@@ -88,7 +88,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/skylarsch/namira.
+Bug reports and pull requests are welcome on GitHub at https://github.com/maddiesch/namira.
 
 ## License
 
