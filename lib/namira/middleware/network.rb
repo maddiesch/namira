@@ -14,7 +14,6 @@ module Namira
       def call(env)
         timeout = env.config[:timeout] || 30.0
         http = HTTP.timeout(
-          :per_operation,
           write: timeout,
           connect: timeout,
           read: timeout
